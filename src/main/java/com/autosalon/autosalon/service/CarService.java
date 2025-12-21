@@ -117,7 +117,7 @@ public class CarService {
                         String brandName) {
                 List<Car> cars;
 
-                // ✅ BRAND FILTER (ПРАВИЛНО)
+                // ✅ BRAND FILTER
                 if (brandName != null && !brandName.isBlank()) {
                         Brand brand = brandRepository.findByNameIgnoreCase(brandName.trim())
                                         .orElseThrow(() -> new RuntimeException("Brand not found"));
@@ -177,17 +177,34 @@ public class CarService {
                                 .transmission(car.getTransmission())
                                 .horsePower(car.getHorsePower())
                                 .color(car.getColor())
-                                .available(car.isAvailable())
+                                .status(car.getStatus())
                                 .brandId(car.getBrand().getId())
                                 .brandName(car.getBrand().getName())
                                 .build();
         }
 
-        public List<CarResponseDTO> getAvailableCars() {
-                return carRepository.findByAvailableTrue()
-                                .stream()
-                                .map(this::mapToResponseDTO)
-                                .toList();
+        public List<CarResponseDTO> getCarsByStatus(CarStatus status) {
+                return carRepository.findByStatus(status)
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
         }
+
+
+        public CarResponseDTO updateCarStatus(Long carId, CarStatus newStatus) {
+
+                Car car = carRepository.findById(carId)
+                        .orElseThrow(() -> new RuntimeException("Car not found"));
+
+        // ❗ бизнес правило: SOLD е краен статус
+                if (car.getStatus() == CarStatus.SOLD) {
+                        throw new RuntimeException("Sold car status cannot be changed");
+                }
+
+                car.setStatus(newStatus);
+
+                return mapToResponseDTO(carRepository.save(car));
+        }
+
 
 }

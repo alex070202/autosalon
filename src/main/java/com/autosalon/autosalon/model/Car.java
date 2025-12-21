@@ -48,9 +48,11 @@ public class Car {
     @Column(nullable = false)
     private Color color;
 
-    @Builder.Default
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean available = true;
+    @Builder.Default
+    private CarStatus status = CarStatus.AVAILABLE;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id", nullable = false)

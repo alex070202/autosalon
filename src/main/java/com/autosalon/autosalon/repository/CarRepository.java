@@ -2,6 +2,7 @@ package com.autosalon.autosalon.repository;
 
 import com.autosalon.autosalon.model.BodyType;
 import com.autosalon.autosalon.model.Car;
+import com.autosalon.autosalon.model.CarStatus;
 import com.autosalon.autosalon.model.Color;
 import com.autosalon.autosalon.model.FuelType;
 
@@ -16,7 +17,8 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     List<Car> findByBrand_Id(Long brandId);
 
-    List<Car> findByAvailableTrue();
+    List<Car> findByStatus(CarStatus status);
+
 
     List<Car> findByPriceBetween(BigDecimal min, BigDecimal max);
 

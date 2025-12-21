@@ -20,7 +20,7 @@ public class CarResponseDTO {
     private TransmissionType transmission;
     private Integer horsePower;
     private Color color;
-    private boolean available;
+    private CarStatus status;
 
     private Long brandId;
     private String brandName;
@@ -37,7 +37,7 @@ public class CarResponseDTO {
                 .transmission(car.getTransmission())
                 .horsePower(car.getHorsePower())
                 .color(car.getColor())
-                .available(car.isAvailable())
+                .status(car.getStatus())
                 .brandId(car.getBrand().getId())
                 .brandName(car.getBrand().getName())
                 .build();

@@ -2,8 +2,9 @@ package com.autosalon.autosalon.controller;
 
 import com.autosalon.autosalon.dto.CarRequestDTO;
 import com.autosalon.autosalon.dto.CarResponseDTO;
+import com.autosalon.autosalon.dto.CarStatusUpdateDTO;
 import com.autosalon.autosalon.model.BodyType;
-
+import com.autosalon.autosalon.model.CarStatus;
 import com.autosalon.autosalon.model.Color;
 import com.autosalon.autosalon.model.FuelType;
 import com.autosalon.autosalon.service.CarService;
@@ -80,12 +81,14 @@ public class CarController {
         return ResponseEntity.ok(carService.getCarsByBrandName(brandName));
     }
     // ======================
-    // GET AVAILABLE CARS
+    // GET CARS status
     // ======================
 
-    @GetMapping("/available")
-    public ResponseEntity<List<CarResponseDTO>> getAvailableCars() {
-    return ResponseEntity.ok(carService.getAvailableCars());
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<CarResponseDTO>> getCarsByStatus(
+        @PathVariable CarStatus status
+    ) {
+        return ResponseEntity.ok(carService.getCarsByStatus(status));
     }
 
     @GetMapping("/filter")
@@ -102,7 +105,6 @@ public class CarController {
     );
     }
 
-
     // ======================
     // DELETE CAR
     // ======================
@@ -110,6 +112,16 @@ public class CarController {
     public ResponseEntity<Void> deleteCar(@PathVariable Long id) {
     carService.deleteCar(id);
     return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<CarResponseDTO> updateCarStatus(
+        @PathVariable Long id,
+        @RequestBody CarStatusUpdateDTO dto
+    ) {
+        return ResponseEntity.ok(
+            carService.updateCarStatus(id, dto.getStatus())
+        );
     }
 
 }
