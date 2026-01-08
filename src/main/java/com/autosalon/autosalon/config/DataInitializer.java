@@ -3,9 +3,11 @@ package com.autosalon.autosalon.config;
 import com.autosalon.autosalon.model.*;
 import com.autosalon.autosalon.repository.BrandRepository;
 import com.autosalon.autosalon.repository.CarRepository;
+import com.autosalon.autosalon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,38 +19,39 @@ public class DataInitializer implements CommandLineRunner {
     private final BrandRepository brandRepository;
     private final CarRepository carRepository;
 
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public void run(String... args) {
 
-        if (brandRepository.count() > 0) {
-            return; // вече има данни
+        // --------- USERS (да не зависи от brands) ----------
+        if (userRepository.count() == 0) {
+            userRepository.save(User.builder()
+                    .username("admin")
+                    .password(passwordEncoder.encode("admin123"))
+                    .role(Role.ADMIN)
+                    .build());
+
+            userRepository.save(User.builder()
+                    .username("user")
+                    .password(passwordEncoder.encode("user123"))
+                    .role(Role.USER)
+                    .build());
         }
 
-        // ======================
-        // BRANDS
-        // ======================
-        Brand bmw = brandRepository.save(
-                Brand.builder().name("BMW").country("Germany").build()
-        );
+        // --------- BRANDS + CARS ----------
+        if (brandRepository.count() > 0) {
+            return;
+        }
 
-        Brand audi = brandRepository.save(
-                Brand.builder().name("Audi").country("Germany").build()
-        );
-        Brand Honda = brandRepository.save(
-                Brand.builder().name("Honda").country("Japan").build()
-        );
-        Brand mercedes = brandRepository.save(
-                Brand.builder().name("Mercedes-Benz").country("Germany").build()
-        );
+        Brand bmw = brandRepository.save(Brand.builder().name("BMW").country("Germany").build());
+        Brand audi = brandRepository.save(Brand.builder().name("Audi").country("Germany").build());
+        Brand honda = brandRepository.save(Brand.builder().name("Honda").country("Japan").build());
+        Brand mercedes = brandRepository.save(Brand.builder().name("Mercedes-Benz").country("Germany").build());
+        Brand volkswagen = brandRepository.save(Brand.builder().name("Volkswagen").country("Germany").build());
 
-        Brand Volkswagen = brandRepository.save(
-                Brand.builder().name("Volkswagen").country("Germany").build()
-        );
-        // ======================
-        // CARS
-        // ======================
         carRepository.saveAll(List.of(
-
                 Car.builder()
                         .model("320d")
                         .year(2019)
@@ -59,19 +62,6 @@ public class DataInitializer implements CommandLineRunner {
                         .transmission(TransmissionType.AUTOMATIC)
                         .horsePower(190)
                         .color(Color.BLACK)
-                        .brand(bmw)
-                        .build(),
-
-                Car.builder()
-                        .model("X5")
-                        .year(2021)
-                        .mileage(60000)
-                        .price(BigDecimal.valueOf(52000))
-                        .fuelType(FuelType.DIESEL)
-                        .bodyType(BodyType.SUV)
-                        .transmission(TransmissionType.AUTOMATIC)
-                        .horsePower(265)
-                        .color(Color.WHITE)
                         .brand(bmw)
                         .build(),
 
@@ -102,7 +92,7 @@ public class DataInitializer implements CommandLineRunner {
                         .build(),
 
                 Car.builder()
-                        .model("Е46")
+                        .model("E46")
                         .year(2002)
                         .mileage(20000)
                         .price(BigDecimal.valueOf(5000))
@@ -114,7 +104,7 @@ public class DataInitializer implements CommandLineRunner {
                         .brand(bmw)
                         .build(),
 
-                 Car.builder()
+                Car.builder()
                         .model("Golf-4")
                         .year(1999)
                         .mileage(300000)
@@ -124,7 +114,7 @@ public class DataInitializer implements CommandLineRunner {
                         .transmission(TransmissionType.MANUAL)
                         .horsePower(101)
                         .color(Color.SILVER)
-                        .brand(Volkswagen)
+                        .brand(volkswagen)
                         .build(),
 
                 Car.builder()
@@ -137,8 +127,8 @@ public class DataInitializer implements CommandLineRunner {
                         .transmission(TransmissionType.AUTOMATIC)
                         .horsePower(150)
                         .color(Color.RED)
-                        .brand(Honda)
-                        .build(), 
+                        .brand(honda)
+                        .build(),
 
                 Car.builder()
                         .model("Q5")
@@ -151,7 +141,7 @@ public class DataInitializer implements CommandLineRunner {
                         .horsePower(350)
                         .color(Color.WHITE)
                         .brand(audi)
-                        .build()       
+                        .build()
         ));
     }
 }

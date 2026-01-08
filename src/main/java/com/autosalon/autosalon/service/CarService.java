@@ -117,7 +117,7 @@ public class CarService {
                         String brandName) {
                 List<Car> cars;
 
-                // ✅ BRAND FILTER
+                // BRAND FILTER
                 if (brandName != null && !brandName.isBlank()) {
                         Brand brand = brandRepository.findByNameIgnoreCase(brandName.trim())
                                         .orElseThrow(() -> new RuntimeException("Brand not found"));
@@ -196,7 +196,7 @@ public class CarService {
                 Car car = carRepository.findById(carId)
                         .orElseThrow(() -> new RuntimeException("Car not found"));
 
-        // ❗ бизнес правило: SOLD е краен статус
+        
                 if (car.getStatus() == CarStatus.SOLD) {
                         throw new RuntimeException("Sold car status cannot be changed");
                 }
